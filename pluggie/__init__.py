@@ -1,1 +1,1 @@
-from .core import Pluggie
+from .core import Pluggie  # noqa

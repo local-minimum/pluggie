@@ -1,10 +1,10 @@
 import os
-from types import Callable
+from typing import Callable
 from importlib import import_module
 from inspect import signature, Parameter
 
-from .excepions import *
-import .validate
+from .exceptions import *
+from . import validate
 
 
 class Trigger:
@@ -173,7 +173,8 @@ class Pluggie:
                         t.event_name,
                         trigger.func_name,
                         t.func_name,
-                ))
+                    )
+                )
 
     def _add_event(self, TriggerClass, args):
         if len(args) == 1 and isinstance(args[0], Callable):
@@ -209,10 +210,9 @@ class Pluggie:
         def gen():
             try:
                 for event, callback in module.__PLUGGIE:
+                    yield event, callback
             except (AttributeError, IndexError, TypeError):
                 raise PluginLoadError("")
-            else:
-                yield event, callback
 
         for event, callback in gen():
             self._register_plugin_callback(event, callback)

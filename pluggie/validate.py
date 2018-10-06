@@ -1,4 +1,4 @@
-from .excepions import SignatureError
+from .exceptions import SignatureError
 
 
 def signature_args(refsig, sig):
@@ -10,7 +10,7 @@ def signature_args(refsig, sig):
         if (param1.kind != param2.kind):
             raise SignatureError(
                 '{} was expected to be of kind {} not {}'.format(
-                    param2.name, param1.kind param2.kind,
+                    param2.name, param1.kind, param2.kind,
                 )
             )
         if (
@@ -30,7 +30,7 @@ def return_types(refsig, sig):
 def _deeptype(obj):
     pass
 
-    
+
 def returned_objects(refsig, original, intermediate):
     if refsig.return_annotation != refsig.empty:
         # check intermediate is valid for refsig.return_annotation
