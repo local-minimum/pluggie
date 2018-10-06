@@ -1,9 +1,9 @@
 import os
 from typing import Callable
-from importlib import import_module
-from inspect import signature, Parameter
+import importlib.util
+from inspect import signature
 
-from .exceptions import *
+from .exceptions import SignatureError, EventTriggerError, PluginLoadError
 from . import validate
 
 
@@ -49,7 +49,7 @@ class Trigger:
         return self.call
 
     def call(self, *args, **kwargs):
-        raise NotImplementedException("{} doesn't implement `call`".format(
+        raise NotImplementedError("{} doesn't implement `call`".format(
             type(self),
         ))
 
@@ -178,7 +178,7 @@ class Pluggie:
 
     def _add_event(self, TriggerClass, args):
         if len(args) == 1 and isinstance(args[0], Callable):
-            trigger = TriggerClass(generic_name, specific_name, self)
+            trigger = TriggerClass(None, None, self)
             self._event_triggers.append(trigger)
             return trigger.setup(args[0])
         elif len(args) == 1:
@@ -203,13 +203,16 @@ class Pluggie:
             os.path.basename(name)
         )
         try:
-            module = importlib.import_module(path)
+            spec = importlib.util.spec_from_file_location(
+                "plugin{}".format(hash(path)), path)
+            plugin = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(plugin)
         except ImportError:
             raise PluginLoadError('Could not locate plugin {}'.format(path))
 
         def gen():
             try:
-                for event, callback in module.__PLUGGIE:
+                for event, callback in plugin.__PLUGGIE:
                     yield event, callback
             except (AttributeError, IndexError, TypeError):
                 raise PluginLoadError("")

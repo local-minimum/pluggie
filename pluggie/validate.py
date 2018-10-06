@@ -6,7 +6,9 @@ def signature_args(refsig, sig):
         raise SignatureError('Missmatch in parameters {} expected {}'.format(
             refsig.parameters.keys(), sig.parameters.keys(),
         ))
-    for param1, param2 in zip(refsig.parameters.values(), sig.parameters.values()):
+    for param1, param2 in zip(
+        refsig.parameters.values(), sig.parameters.values(),
+    ):
         if (param1.kind != param2.kind):
             raise SignatureError(
                 '{} was expected to be of kind {} not {}'.format(
@@ -14,7 +16,7 @@ def signature_args(refsig, sig):
                 )
             )
         if (
-            param1.annotation != Parameter.empty
+            param1.annotation != param1.empty
             and param1.annotation != param2.annotation
         ):
             raise SignatureError('{} must have annotation {}, not {}'.format(
@@ -22,6 +24,7 @@ def signature_args(refsig, sig):
                 param1.annotation,
                 param2.annotation,
             ))
+
 
 def return_types(refsig, sig):
     pass
@@ -52,7 +55,6 @@ def args_against_signature(sig, *args, **kwargs):
     ]
     if len(args) < len(position_only):
         raise SignatureError('Returned arguments not sufficient for function')
-
 
     # Test
     pass

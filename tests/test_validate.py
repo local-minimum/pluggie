@@ -4,6 +4,7 @@ import pytest
 
 from pluggie import validate
 
+
 def func1(a, b, c=4, d=5):
     pass
 
